@@ -1,13 +1,41 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { SERVICES_DATA } from '../../constants';
+import * as LucideIcons from 'lucide-react';
+import { Loader2 } from 'lucide-react';
+import Logo from '../../assets/petrichor_tech_lab.png';
+
+interface Service {
+  id: number;
+  title: string;
+  slug: string;
+  description: string;
+  icon_name: string;
+}
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [services, setServices] = useState<Service[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const location = useLocation();
+
+  // Fetch Services for Dropdown
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/services`);
+        const result = await res.json();
+        setServices(result.data || []);
+      } catch (err) {
+        console.error("Menu fetch failed", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -23,83 +51,107 @@ const Navbar: React.FC = () => {
     setIsDropdownOpen(false);
   }, [location.pathname]);
 
+  // Helper to render dynamic icons
+  const DynamicIcon = ({ name }: { name: string }) => {
+    const IconComponent = (LucideIcons as any)[name] || LucideIcons.Layout;
+    return <IconComponent size={18} />;
+  };
+
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-3 glass shadow-sm' : 'py-5 bg-transparent'}`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-3 bg-white/95 shadow-lg' : 'py-5 bg-transparent'}`}>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-5c1.62-2.2 5-3 5-3"/><path d="M12 15v5s3.03-.55 5-2c2.2-1.62 3-5 3-5"/></svg>
-          </div>
-          <span className="font-outfit font-bold text-xl tracking-tight text-slate-900">
-            Petrichor<span className="text-blue-600">.</span>
-          </span>
+          <img src={Logo} alt="Petrichor Tech Lab" className="w-28 lg:w-36 object-contain" />
         </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-8">
-          <Link to="/" className={`text-sm font-medium transition-colors ${location.pathname === '/' ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>Home</Link>
-          <Link to="/about" className={`text-sm font-medium transition-colors ${location.pathname === '/about' ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>About</Link>
+          <Link to="/" className={`text-sm font-medium transition-colors ${location.pathname === '/' ? 'text-petrichor-sky' : (isScrolled ? ' hover:text-petrichor-sky' : 'text-slate-600 hover:text-petrichor-sky')}`}>Home</Link>
+          <Link to="/about" className={`text-sm font-medium transition-colors ${location.pathname === '/about' ? 'text-petrichor-sky' : (isScrolled ? ' hover:text-petrichor-sky' : 'text-slate-600 hover:text-petrichor-sky')}`}>About</Link>
           
           {/* Services Dropdown */}
           <div className="relative" onMouseEnter={() => setIsDropdownOpen(true)} onMouseLeave={() => setIsDropdownOpen(false)}>
-            <button className={`text-sm font-medium transition-colors flex items-center gap-1 ${location.pathname.startsWith('/services') ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>
+            <Link to="/services" className={`text-sm font-medium transition-colors flex items-center gap-1 ${location.pathname.startsWith('/services') ? 'text-petrichor-sky' : (isScrolled ? ' hover:text-petrichor-sky' : 'text-slate-600 hover:text-petrichor-sky')}`}>
               Services
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-            </button>
+              <LucideIcons.ChevronDown size={14} />
+            </Link>
             
             {isDropdownOpen && (
-              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-64">
+              <div className="absolute top-full left-1/2 -translate-x-1/2 pt-4 w-72">
                 <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-2 overflow-hidden flex flex-col animate-in fade-in slide-in-from-top-2 duration-200">
-                  {SERVICES_DATA.map((service) => (
-                    <Link 
-                      key={service.id} 
-                      to={service.path}
-                      className="px-4 py-3 hover:bg-slate-50 rounded-xl transition-colors flex items-start gap-3 group"
-                    >
-                      <div className="mt-0.5 text-blue-600 opacity-70 group-hover:opacity-100 transition-opacity">
-                        {service.icon}
-                      </div>
-                      <div>
-                        <div className="text-sm font-semibold text-slate-900">{service.title}</div>
-                        <div className="text-xs text-slate-500 line-clamp-1">{service.description}</div>
-                      </div>
+                  {isLoading ? (
+                    <div className="p-4 text-center text-slate-400"><Loader2 className="animate-spin mx-auto" size={20}/></div>
+                  ) : services.length > 0 ? (
+                    services.map((service) => (
+                      <Link 
+                        key={service.id} 
+                        to={`/services/${service.slug}`}
+                        className="px-4 py-3 hover:bg-slate-50 rounded-xl transition-colors flex items-start gap-3 group"
+                      >
+                        <div className="mt-0.5 text-petrichor-sky opacity-70 group-hover:opacity-100 transition-opacity bg-petrichor-light p-1.5 rounded-lg">
+                          <DynamicIcon name={service.icon_name} />
+                        </div>
+                        <div>
+                          <div className="text-sm font-semibold text-slate-900 group-hover:text-petrichor-sky transition-colors">{service.title}</div>
+                          <div className="text-[11px] text-slate-500 line-clamp-1 mt-0.5">{service.description}</div>
+                        </div>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="p-4 text-sm text-slate-500 text-center">No services available</div>
+                  )}
+                  <div className="border-t border-slate-50 mt-1 pt-1">
+                    <Link to="/services" className="block px-4 py-2 text-xs font-bold text-center text-petrichor-sky hover:bg-petrichor-light rounded-lg transition-colors">
+                        View All Services
                     </Link>
-                  ))}
+                  </div>
                 </div>
               </div>
             )}
           </div>
 
-          <Link to="/contact" className={`text-sm font-medium transition-colors ${location.pathname === '/contact' ? 'text-blue-600' : 'text-slate-600 hover:text-blue-600'}`}>Contact</Link>
+          <Link to="/contact" className={`text-sm font-medium transition-colors ${location.pathname === '/contact' ? 'text-petrichor-sky' : (isScrolled ? ' hover:text-petrichor-sky' : 'text-slate-600 hover:text-petrichor-sky')}`}>Contact</Link>
           
-          <Link to="/consultancy" className="bg-blue-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-500/30 transition-all active:scale-95">
+          <Link to="/consultancy" className="bg-petrichor-sky text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-petrichor-navy hover:shadow-lg hover:shadow-petrichor-sky/30 transition-all active:scale-95">
             Free Consultancy
           </Link>
         </div>
 
         {/* Mobile Toggle */}
-        <button className="md:hidden text-slate-900" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">{isMobileMenuOpen ? <path d="M18 6 6 18M6 6l12 12"/> : <path d="M4 6h16M4 12h16M4 18h16"/>}</svg>
+        <button className={`md:hidden ${isScrolled ? 'text-slate-900' : 'text-slate-900'}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+          {isMobileMenuOpen ? <LucideIcons.X size={24} /> : <LucideIcons.Menu size={24} />}
         </button>
       </div>
 
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 top-[70px] bg-white z-40 md:hidden overflow-y-auto animate-in fade-in slide-in-from-right duration-300">
+        <div className="fixed inset-0 top-[70px] bg-white z-40 md:hidden overflow-y-auto animate-in fade-in slide-in-from-right duration-300 border-t border-slate-100">
           <div className="p-6 flex flex-col gap-6">
             <Link to="/" className="text-xl font-semibold text-slate-900 py-2 border-b border-slate-100">Home</Link>
             <Link to="/about" className="text-xl font-semibold text-slate-900 py-2 border-b border-slate-100">About Us</Link>
+            
             <div className="flex flex-col gap-4">
-               <span className="text-xl font-semibold text-slate-900 py-2">Services</span>
-               <div className="grid grid-cols-1 gap-4 pl-4">
-                 {SERVICES_DATA.map(s => (
-                   <Link key={s.id} to={s.path} className="text-slate-600 text-lg">{s.title}</Link>
+               <Link to="/services" className="text-xl font-semibold text-slate-900 py-2 flex items-center justify-between">
+                 Services
+                 <LucideIcons.ArrowRight size={16} className="text-slate-400" />
+               </Link>
+               <div className="grid grid-cols-1 gap-3 pl-4 border-l-2 border-slate-100 ml-2">
+                 {isLoading ? (
+                   <span className="text-slate-400 text-sm">Loading services...</span>
+                 ) : services.map(s => (
+                   <Link key={s.id} to={`/services/${s.slug}`} className="text-slate-600 text-base py-1 flex items-center gap-2 active:text-petrichor-sky">
+                     <DynamicIcon name={s.icon_name} />
+                     {s.title}
+                   </Link>
                  ))}
                </div>
             </div>
+
             <Link to="/contact" className="text-xl font-semibold text-slate-900 py-2 border-b border-slate-100">Contact</Link>
-            <Link to="/consultancy" className="bg-blue-600 text-white text-center py-4 rounded-2xl font-bold text-lg">Get Free Consultancy</Link>
+            <Link to="/consultancy" className="bg-petrichor-sky text-white text-center py-4 rounded-2xl font-bold text-lg mt-4 shadow-xl shadow-petrichor-light">
+                Get Free Consultancy
+            </Link>
           </div>
         </div>
       )}

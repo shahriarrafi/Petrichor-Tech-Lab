@@ -1,21 +1,29 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+1. Clone & Setup
+git clone https://github.com/shahriarrafi/Petrichor-Tech-Lab.git
+cd Petrichor-Tech-Lab
 
-# Run and deploy your AI Studio app
-
-This contains everything you need to run your app locally.
-
-View your app in AI Studio: https://ai.studio/apps/temp/2
-
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
+Frontend:
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
+2. Run the app:
    `npm run dev`
 # Petrichor-Tech-Lab
+
+### Environment Variables (.env)
+VITE_API_URL=https:http://localhost:3000/api
+
+Backend:
+1. Backend Installation (Laravel)
+cd laravel_backend
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+
+📡 Primary API Endpoints
+Resource,Endpoint,Method,Access
+Authentication, /api/login,POST,Public
+Services, /api/services,GET,Public
+Admin Services, /api/admin/services,POST/PUT,Admin (Token)
+Consultations, /api/admin/consultations,GET,Admin (Token)

@@ -24,6 +24,7 @@ export interface ProcessStep {
 }
 
 export interface ConsultancyFormData {
+  id: number;
   name: string;
   email: string;
   phone: string;
