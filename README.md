@@ -12,32 +12,31 @@ Frontend:
 ### Environment Variables (.env)
 VITE_API_URL=https:http://localhost:3000/api
 
-### Frontend Structure
 src/
-├── components/
-│   ├── admin/
-│   │   ├── Layout.tsx        # Persistent Sidebar/Header for Admin
-│   │   └── LoginForm.tsx     # Handles auth logic and token storage
-│   ├── Footer.tsx            # Public site footer
-│   └── Navbar.tsx            # Public site navigation with links
-├── layouts/
-│   ├── AdminLayout.tsx       # Root wrapper for /admin routes
-│   └── PublicLayout.tsx      # Root wrapper with Nav/Footer for visitors
-├── pages/
-│   ├── admin/                # Views toggled via 'currentView' state
-│   │   ├── ConsultationManager.tsx
+├── components/           # Reusable UI building blocks
+│   ├── admin/            # Dashboard-specific components
+│   │   ├── Layout.tsx    # Admin Shell (Sidebar/Header)
+│   │   └── LoginForm.tsx # Admin Auth portal logic
+│   ├── Footer.tsx        # Global site footer
+│   └── Navbar.tsx        # Global site navigation
+├── layouts/              # High-level Structural Wrappers
+│   ├── AdminLayout.tsx   # Restricted shell for Auth users
+│   └── PublicLayout.tsx  # Marketing shell (Nav + Footer)
+├── pages/                # Top-level Page Views
+│   ├── admin/            # Dashboard views (State-swapped)
 │   │   ├── Dashboard.tsx
-│   │   └── ServiceManager.tsx
-│   ├── About.tsx             # About Page
-│   ├── Home.tsx              # Home Page
-│   └── ServiceDetail.tsx     # Dynamic Page (expects :serviceId)
-│   └── Services.tsx          # All Services
-│   └── Contact.tsx           # Contact Page
-│   └── Consultancy.tsx       # Consultancy Page
-├── styles/
-│   └── base.css              # Tailwind directives and global overrides
-├── App.tsx                   # Entry point for Routing & Admin Auth logic
-└── main.tsx                  # React DOM mounting point
+│   │   ├── ServiceManager.tsx
+│   │   └── ConsultationManager.tsx
+│   ├── Home.tsx          # Landing Page
+│   ├── Services.tsx      # All Service Catalog
+│   ├── ServiceDetail.tsx # Dynamic Service View (:serviceId)
+│   ├── Consultancy.tsx   # Consultancy info
+│   ├── Contact.tsx       # Lead generation forms
+│   └── About.tsx         # Brand story
+├── styles/               # Global Design System
+│   └── base.css          # Tailwind resets & custom utilities
+├── App.tsx               # Main Router & Auth Guard logic
+└── main.tsx              # React mounting point
 
 Backend:
 1. Backend Installation (Laravel)
