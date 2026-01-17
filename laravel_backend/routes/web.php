@@ -6,14 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 
 Route::get('/', function () {
-    // We only need to go up one level from 'laravel_backend'
-    $path = base_path('../dist/index.html');
-
-    if (file_exists($path)) {
-        return file_get_contents($path);
-    }
-    
-    return "Index file not found at: " . $path;
+    return 'Laravel Backend is running! API is at /api';
 });
 
 // 1. FIXED SETUP ROUTE

@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://petrichortechlab.com', 'https://www.petrichortechlab.com'],
+    'allowed_origins' => ['https://petrichortechlab.com', 'https://www.petrichortechlab.com', 'http://localhost:3000'],
 
     'allowed_origins_patterns' => [],
 
